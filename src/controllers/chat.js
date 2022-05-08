@@ -136,9 +136,12 @@ function messagesByState(sender_psid, received_message){
       const yesAnswers = ['yes', 'yeah', 'yup'];
       const noAnswers = ['no', 'nah', 'nope'];
       if (yesAnswers.includes(received_message.text.toLowerCase())) {
-        stormDb.updateStateById(sender_psid, 'resultdays'); 
+        stormDb.updateStateById(sender_psid, 'resultdays');
+        const birthDate = stormDb.getDateById(sender_psid);
+        response = { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` }; 
       } else if (noAnswers.includes(received_message.text.toLowerCase())) {
-        stormDb.updateStateById(sender_psid, 'bye'); 
+        stormDb.updateStateById(sender_psid, 'bye');
+        response = { "text": "Goodbye" };
       }
       break;
     case 'resultdays':
