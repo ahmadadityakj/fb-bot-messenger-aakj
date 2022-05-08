@@ -9,9 +9,9 @@ const push = (data) => {
 };
 
 const updateNameById = (id, newName) => {
-  const prevMessages = stormDb.db.get('messages').value();
+  const prevMessages = db.get('messages').value();
   const newMessages = prevMessages.map(x => x.user === id ? { ...x, name: newName } : x);
-  stormDb.db.get('messages').set(newMessages).save();
+  db.get('messages').set(newMessages).save();
 };
 
 module.exports = {

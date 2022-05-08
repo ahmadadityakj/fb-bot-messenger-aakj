@@ -27,9 +27,7 @@ let webRoutes = (app)=> {
     res.status(200).send('ok');
   });
   router.get("/update", (req, res) => {
-    const allMessages = stormDb.db.get('messages').value();
-    const newMessages = allMessages.map(x => x.user === '45678' ? { ...x, name: 'tes'} : x);
-    stormDb.db.get('messages').set(newMessages).save();
+    stormDb.updateNameById('45678', 'okeee');
     res.status(200).send('ok');
   });
   router.get("/messages", (req, res) => {
