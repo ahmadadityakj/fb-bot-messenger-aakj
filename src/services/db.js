@@ -2,7 +2,7 @@ import StormDB from "stormdb";
 
 const engine = new StormDB.localFileEngine("./db.stormdb");
 const db = new StormDB(engine);
-db.default({ messages: [], states: [] });
+db.default({ messages: [] });
 
 const push = (data) => {
   db.get('messages').push(data).save();
@@ -26,20 +26,16 @@ const getDateById = (id) => {
   return message.birthDate;
 };
 
-const pushState = (data) => {
-  db.get('states').push(data).save();
-};
-
 const updateStateById = (id, newState) => {
-  const prevStates = db.get('states').value();
-  const newStates = prevStates.map(x => x.user === id ? { ...x, state: newState } : x);
-  db.get('states').set(newStates).save();
+  const prevMessages = db.get('messages').value();
+  const newMessages = prevMessages.map(x => x.user === id ? { ...x, state: newState } : x);
+  db.get('messages').set(newMessages).save();
 };
 
 const getStateById = (id) => {
-  const states = db.get('states').value();
-  const state = states.find(x => x.user === id);
-  return state.state;
+  const messages = db.get('messages').value();
+  const message = messages.find(x => x.user === id);
+  return message.state;
 };
 
 module.exports = {
@@ -48,7 +44,6 @@ module.exports = {
   updateNameById: updateNameById,
   updateDateById: updateDateById,
   getDateById: getDateById,
-  pushState: pushState,
   updateStateById: updateStateById,
   getStateById: getStateById
 };

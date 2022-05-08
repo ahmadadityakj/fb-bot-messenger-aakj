@@ -214,9 +214,7 @@ function handlePostback(sender_psid, received_postback) {
       stormDb.push({
         user: sender_psid, name: '', messages: []
       });
-      stormDb.pushState({
-        user: sender_psid, state: 'welcome'
-      });
+      stormDb.updateStateById(sender_psid, 'welcome');
       
       callSendAPI(sender_psid, { "text": "Hi" }).then(() => {       
         stormDb.updateStateById(sender_psid, 'firstname'); 
