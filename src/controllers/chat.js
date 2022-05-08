@@ -91,18 +91,21 @@ function handlePostback(sender_psid, received_postback) {
 
     switch (payload) {
       case 'welcome':
-        response = { "text": "Hi" }
+        callSendAPI(sender_psid, { "text": "Hi" }).then(() => {
+          callSendAPI(sender_psid, { "text": "What is your first name ?" })
+        });
         break;
       default:
         break;
     }
 
     // Send the message to acknowledge the postback
-    callSendAPI(sender_psid, response);
+    // callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
+  return new Promise(function(resolve, reject) {
     // Construct the message body
     let request_body = {
         "recipient": {
@@ -121,10 +124,13 @@ function callSendAPI(sender_psid, response) {
     }, (err, res, body) => {
         if (!err) {
             console.log('message sent!');
+            resolve(body);
         } else {
             console.error("Unable to send message:" + err);
+            reject(res.error);
         }
     });
+  })
 }
 
 module.exports = {
