@@ -69,39 +69,17 @@ let getWebhook = (req, res) => {
   }
 };
 
-function firstTrait(nlp, name) {
-  return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
-}
-
-// Handles messages events
-function handleMessage(sender_psid, received_message) {
-  let response;
-
-  // Check if the message contains text
-  if (received_message.text) {
-    if (received_message.nlp) {
-      // if nlp exist
-      let entitiesArr = ["wit$datetime:$datetime"];
-      let entityChosen = "";
-      entitiesArr.forEach((name) => {
-        let entity = firstTrait(received_message.nlp, name);
-        if (entity && entity.confidence > 0.8) {
-            entityChosen = name;
-        }
-      });
+function countDays(date){
+  const today = dayjs();
+  const birthDate = dayjs(date);
+  const monthBirth = birthDate.month();
+  const dayBirth = birthDate.date();
+  let nextBirthDate = today.month(monthBirth).date(dayBirth);
+  if (nextBirthDate.isBefore(today)) {
+    nextBirthDate = nextBirthDate.add(1, 'year');
+  }
   
-      if (entityChosen === 'wit$datetime:$datetime') {
-        callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
-      }
-    } else {
-      response = messagesByState(sender_psid, received_message);
-
-      callSendAPI(sender_psid, response);
-    }
-  } 
-
-  // Sends the response message
-  // callSendAPI(sender_psid, response);
+  return nextBirthDate.diff(today, 'day');
 }
 
 function messagesByState(sender_psid, received_message){
@@ -187,17 +165,39 @@ function messagesByState(sender_psid, received_message){
   }
 }
 
-function countDays(date){
-  const today = dayjs();
-  const birthDate = dayjs(date);
-  const monthBirth = birthDate.month();
-  const dayBirth = birthDate.date();
-  let nextBirthDate = today.month(monthBirth).date(dayBirth);
-  if (nextBirthDate.isBefore(today)) {
-    nextBirthDate = nextBirthDate.add(1, 'year');
-  }
+function firstTrait(nlp, name) {
+  return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
+}
+
+// Handles messages events
+function handleMessage(sender_psid, received_message) {
+  let response;
+
+  // Check if the message contains text
+  if (received_message.text) {
+    if (received_message.nlp) {
+      // if nlp exist
+      let entitiesArr = ["wit$datetime:$datetime"];
+      let entityChosen = "";
+      entitiesArr.forEach((name) => {
+        let entity = firstTrait(received_message.nlp, name);
+        if (entity && entity.confidence > 0.8) {
+            entityChosen = name;
+        }
+      });
   
-  return nextBirthDate.diff(today, 'day');
+      if (entityChosen === 'wit$datetime:$datetime') {
+        callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
+      }
+    } else {
+      response = messagesByState(sender_psid, received_message);
+
+      callSendAPI(sender_psid, response);
+    }
+  }
+
+  // Sends the response message
+  // callSendAPI(sender_psid, response);
 }
 
 // Handles messaging_postbacks events
