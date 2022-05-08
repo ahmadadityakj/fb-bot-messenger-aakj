@@ -1,0 +1,33 @@
+{
+  "name": "fb-bot-messenger-aakj",
+  "version": "1.0.0",
+  "description": "facebook messenger bot",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node src/server.js"
+  },
+  "keywords": [
+    "fb",
+    "messenger",
+    "bot",
+    "nodejs"
+  ],
+  "author": "Ahmad Aditya KJ",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@babel/node": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "jest": "^28.0.3",
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.7",
+    "express": "^4.18.1",
+    "request": "^2.88.2"
+  }
+}
