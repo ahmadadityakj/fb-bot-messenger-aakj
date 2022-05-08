@@ -80,13 +80,13 @@ function handleMessage(sender_psid, received_message) {
     let entitiesArr = ["wit$datetime:$datetime"];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
-      let entity = firstTrait(message.nlp, name);
+      let entity = firstTrait(received_message.nlp, name);
       if (entity && entity.confidence > 0.8) {
           entityChosen = name;
       }
 
       if (entityChosen === 'wit$datetime:$datetime') {
-        callSendAPI(sender_psid, {"text": `this is your birth date: "${received_message.text}"`})
+        callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
       }
     });
 
