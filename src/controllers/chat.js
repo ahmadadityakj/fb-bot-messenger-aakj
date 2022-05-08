@@ -250,7 +250,7 @@ function handlePostback(sender_psid, received_postback) {
       break;
     case 'no_birthdate':
       stormDb.updateMessageById(sender_psid, received_postback.title);
-      callSendAPI(sender_psid, { "text": "What is your birth date ?" });
+      callSendAPI(sender_psid, { "text": "What is your birth date ? use format YYYY-MM-DD, YYYY for year, MM for month, DD for date. Ex: 2000-01-25" });
       break;
     case 'yes_count':
       stormDb.updateMessageById(sender_psid, received_postback.title);
