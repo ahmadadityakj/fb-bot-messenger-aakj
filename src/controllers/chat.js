@@ -1,8 +1,8 @@
 require("dotenv").config();
 import request from "request";
-import { Low, JSONFile } from 'lowdb'
+import { Low, JSONFile } from 'lowdb';
 
-const db = new Low(new JSONFile('db.json'))
+const db = new Low(new JSONFile('db.json'));
 
 let postWebhook = (req, res) =>{
   // Parse the request body from the POST
