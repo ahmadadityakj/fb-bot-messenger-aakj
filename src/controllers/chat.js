@@ -163,6 +163,8 @@ function messagesByState(sender_psid, received_message){
     default:
       break;
   }
+
+  return response;
 }
 
 function firstTrait(nlp, name) {
