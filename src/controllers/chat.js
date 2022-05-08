@@ -1,6 +1,6 @@
 require("dotenv").config();
 import request from "request";
-import db from "../services/db";
+import stormDb from "../services/db";
 
 let postWebhook = (req, res) =>{
   // Parse the request body from the POST
@@ -168,7 +168,7 @@ function handlePostback(sender_psid, received_postback) {
 
   switch (payload) {
     case 'welcome':
-      db.get('messages').push({
+      stormDb.db.get('messages').push({
         user: sender_psid, name: '', messages: []
       }).save();
       callSendAPI(sender_psid, { "text": "Hi" }).then(() => {        
