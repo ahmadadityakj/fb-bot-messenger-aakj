@@ -124,6 +124,9 @@ function handleMessage(sender_psid, received_message) {
         if (yesNoAnswers.includes(received_message.text.toLowerCase())) {
 
         } else {
+          // update name
+          stormDb.updateNameById(sender_psid, received_message.text);
+          
           response = {
             "attachment": {
               "type": "template",
