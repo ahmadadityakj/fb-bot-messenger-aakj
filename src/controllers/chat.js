@@ -258,8 +258,9 @@ function handlePostback(sender_psid, received_postback) {
       callSendAPI(sender_psid, { "text": "What is your birth date ?" });
       break;
     case 'yes_count':
-      stormDb.updateStateById(sender_psid, 'resultdays'); 
-      callSendAPI(sender_psid, { "text": "There are N days until your next birthday" });
+      stormDb.updateStateById(sender_psid, 'resultdays');
+      const birthDate = stormDb.getDateById(sender_psid);
+      callSendAPI(sender_psid, { "text": `There are ${countDays(birthDate)} days until your next birthday` });
       break;
     case 'no_count':
       stormDb.updateStateById(sender_psid, 'bye'); 
