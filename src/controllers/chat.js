@@ -15,8 +15,6 @@ let postWebhook = (req, res) =>{
     body.entry.forEach(function(entry) {
 
       // Gets the body of the webhook event
-      console.log('entry');
-      console.log(entry);
       let webhook_event = entry.messaging[0];
       console.log('webhook event');
       console.log(webhook_event);
@@ -163,6 +161,8 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   // Check if the message contains text
+  console.log('message');
+  console.log(received_message);
   if (received_message.text) {
     // update message from user
     stormDb.updateMessageById(sender_psid, received_message.text);
