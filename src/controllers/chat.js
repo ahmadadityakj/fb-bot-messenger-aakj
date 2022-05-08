@@ -1,5 +1,8 @@
 require("dotenv").config();
 import request from "request";
+import { Low, JSONFile } from 'lowdb'
+
+const db = new Low(new JSONFile('db.json'))
 
 let postWebhook = (req, res) =>{
   // Parse the request body from the POST
@@ -200,6 +203,12 @@ function handlePostback(sender_psid, received_postback) {
       break;
     case 'no_birthdate':
       callSendAPI(sender_psid, { "text": "What is your birth date ?" });
+      break;
+    case 'yes_count':
+      callSendAPI(sender_psid, { "text": "There are N days until your next birthday" });
+      break;
+    case 'no_count':
+      callSendAPI(sender_psid, { "text": "Goodbye" });
       break;
     default:
       break;
