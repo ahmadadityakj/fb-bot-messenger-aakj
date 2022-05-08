@@ -22,7 +22,7 @@ const updateDateById = (id, newDate) => {
 
 const updateMessageById = (id, newMessage) => {
   const prevMessages = db.get('messages').value();
-  const newMessages = prevMessages.map(x => x.user === id ? { ...x, messages: [...messages, newMessage] } : x);
+  const newMessages = prevMessages.map(x => x.user === id ? { ...x, messages: [...x.messages, newMessage] } : x);
   db.get('messages').set(newMessages).save();
 };
 
