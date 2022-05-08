@@ -15,6 +15,10 @@ let webRoutes = (app)=> {
     }).save();
     res.status(200).send('ok');
   });
+  router.get("/messages", (req, res) => {
+    const allMessages = stormDb.db.get('messages').value();
+    res.status(200).json(allMessages);
+  });
 
   return app.use("/", router);
 };
