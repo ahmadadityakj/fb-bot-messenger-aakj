@@ -79,16 +79,22 @@ function handleMessage(sender_psid, received_message) {
   if (received_message.text) {
     let entitiesArr = ["wit$datetime:$datetime"];
     let entityChosen = "";
+    console.log('=== nlp start');
+    console.log(received_message.nlp);
+    console.log('=== nlp end');
     entitiesArr.forEach((name) => {
       let entity = firstTrait(received_message.nlp, name);
+      console.log('=== entity start ====');
+      console.log(entity);
+      console.log('=== entity end ====');
       if (entity && entity.confidence > 0.8) {
           entityChosen = name;
       }
-
-      if (entityChosen === 'wit$datetime:$datetime') {
-        callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
-      }
     });
+
+    if (entityChosen === 'wit$datetime:$datetime') {
+      callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
+    }
 
     // Create the payload for a basic text message
     response = {
@@ -97,7 +103,7 @@ function handleMessage(sender_psid, received_message) {
   } 
 
   // Sends the response message
-  callSendAPI(sender_psid, response);
+  // callSendAPI(sender_psid, response);
 }
 
 // Handles messaging_postbacks events
