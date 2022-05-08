@@ -12,6 +12,8 @@ let postWebhook = (req, res) =>{
         body.entry.forEach(function(entry) {
 
             // Gets the body of the webhook event
+            console.log('entry');
+            console.log(entry);
             let webhook_event = entry.messaging[0];
             console.log('webhook event');
             console.log(webhook_event);
