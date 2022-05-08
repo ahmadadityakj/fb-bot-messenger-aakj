@@ -212,13 +212,16 @@ function handlePostback(sender_psid, received_postback) {
       });
       break;
     case 'yes_firstname':
+      stormDb.updateMessageById(sender_psid, received_postback.title);
       stormDb.updateStateById(sender_psid, 'birthdate'); 
       callSendAPI(sender_psid, { "text": "when is your birth date ?" });
       break;
     case 'no_firstname':
+      stormDb.updateMessageById(sender_psid, received_postback.title);
       callSendAPI(sender_psid, { "text": "What is your first name ?" });
       break;
     case 'yes_birthdate':
+      stormDb.updateMessageById(sender_psid, received_postback.title);
       stormDb.updateStateById(sender_psid, 'countdays'); 
       callSendAPI(sender_psid, { 
         "attachment": {
@@ -246,14 +249,17 @@ function handlePostback(sender_psid, received_postback) {
       });
       break;
     case 'no_birthdate':
+      stormDb.updateMessageById(sender_psid, received_postback.title);
       callSendAPI(sender_psid, { "text": "What is your birth date ?" });
       break;
     case 'yes_count':
+      stormDb.updateMessageById(sender_psid, received_postback.title);
       stormDb.updateStateById(sender_psid, 'resultdays');
       const birthDate = stormDb.getDateById(sender_psid);
       callSendAPI(sender_psid, { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` });
       break;
     case 'no_count':
+      stormDb.updateMessageById(sender_psid, received_postback.title);
       stormDb.updateStateById(sender_psid, 'bye'); 
       callSendAPI(sender_psid, { "text": "Goodbye" });
       break;
