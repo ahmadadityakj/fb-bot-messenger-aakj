@@ -5,11 +5,11 @@ import chatController from "../controllers/chat";
 let router = express.Router();
 
 let webRoutes = (app)=> {
-    router.get("/", homeController.showHome);
-    router.get("/webhook", chatController.getWebhook);
-    router.post("/webhook", chatController.postWebhook);
+  router.get("/", homeController.showHome);
+  router.get("/webhook", chatController.getWebhook);
+  router.post("/webhook", chatController.postWebhook);
 
-    return app.use("/", router);
+  return app.use("/", router);
 };
 
 module.exports = webRoutes;
