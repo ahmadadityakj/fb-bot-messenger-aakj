@@ -84,7 +84,6 @@ function countDays(date){
 
 function messagesByState(sender_psid, received_message){
   let response;
-  const text = received_message.text;
   const currState = stormDb.getStateById(sender_psid);
   switch (currState) {
     case 'welcome':

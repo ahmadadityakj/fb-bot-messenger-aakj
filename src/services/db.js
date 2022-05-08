@@ -35,7 +35,7 @@ const updateStateById = (id, newState) => {
 const getStateById = (id) => {
   const messages = db.get('messages').value();
   const message = messages.find(x => x.user === id);
-  return message.state;
+  return message?.state;
 };
 
 module.exports = {
