@@ -77,29 +77,47 @@ function handleMessage(sender_psid, received_message) {
 
   // Check if the message contains text
   if (received_message.text) {
-    let entitiesArr = ["wit$datetime:$datetime"];
-    let entityChosen = "";
-    console.log('=== nlp start');
-    console.log(received_message);
-    console.log(received_message.nlp);
-    console.log('=== nlp end');
-    entitiesArr.forEach((name) => {
-      let entity = firstTrait(received_message.nlp, name);
-      console.log('=== entity start ====');
-      console.log(entity);
-      console.log('=== entity end ====');
-      if (entity && entity.confidence > 0.8) {
-          entityChosen = name;
+    if (received_message.nlp) {
+      // if nlp exist
+      let entitiesArr = ["wit$datetime:$datetime"];
+      let entityChosen = "";
+      entitiesArr.forEach((name) => {
+        let entity = firstTrait(received_message.nlp, name);
+        if (entity && entity.confidence > 0.8) {
+            entityChosen = name;
+        }
+      });
+  
+      if (entityChosen === 'wit$datetime:$datetime') {
+        callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
       }
-    });
+    } else {
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [{
+              "title": "Is this your first name?",
+              "subtitle": "Tap a button to answer.",
+              "buttons": [
+                  {
+                      "type": "postback",
+                      "title": "Yes!",
+                      "payload": "yes_firstname",
+                  },
+                  {
+                      "type": "postback",
+                      "title": "No!",
+                      "payload": "no_firstname",
+                  }
+              ],
+            }]
+          }
+        }
+      }
 
-    if (entityChosen === 'wit$datetime:$datetime') {
-      callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
-    }
-
-    // Create the payload for a basic text message
-    response = {
-        "text": `You sent the message: "${received_message.text}". Now send me an image!`
+      callSendAPI(sender_psid, response);
     }
   } 
 
@@ -119,6 +137,12 @@ function handlePostback(sender_psid, received_postback) {
       callSendAPI(sender_psid, { "text": "Hi" }).then(() => {
         callSendAPI(sender_psid, { "text": "What is your first name ?" })
       });
+      break;
+    case 'yes_firstname':
+      callSendAPI(sender_psid, { "text": "when is your birth date ?" })
+      break;
+    case 'no_firstname':
+      callSendAPI(sender_psid, { "text": "What is your first name ?" })
       break;
     default:
       break;
