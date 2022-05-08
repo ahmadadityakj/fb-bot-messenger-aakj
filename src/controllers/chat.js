@@ -1,8 +1,6 @@
 require("dotenv").config();
 import request from "request";
-// import { Low, JSONFile } from 'lowdb';
-
-// const db = new Low(new JSONFile('db.json'));
+import db from "../services/db";
 
 let postWebhook = (req, res) =>{
   // Parse the request body from the POST
@@ -122,27 +120,32 @@ function handleMessage(sender_psid, received_message) {
           }
         }
       } else {
-        response = {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": [{
-                "title": `Is this your first name? ${received_message.text}`,
-                "subtitle": "Tap a button to answer.",
-                "buttons": [
-                    {
-                        "type": "postback",
-                        "title": "Yes!",
-                        "payload": "yes_firstname",
-                    },
-                    {
-                        "type": "postback",
-                        "title": "No!",
-                        "payload": "no_firstname",
-                    }
-                ],
-              }]
+        const yesNoAnswers = ['yes', 'yeah', 'yup', 'no', 'nah'];
+        if (yesNoAnswers.includes(received_message.text.toLowerCase())) {
+
+        } else {
+          response = {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "generic",
+                "elements": [{
+                  "title": `Is this your first name? ${received_message.text}`,
+                  "subtitle": "Tap a button to answer.",
+                  "buttons": [
+                      {
+                          "type": "postback",
+                          "title": "Yes!",
+                          "payload": "yes_firstname",
+                      },
+                      {
+                          "type": "postback",
+                          "title": "No!",
+                          "payload": "no_firstname",
+                      }
+                  ],
+                }]
+              }
             }
           }
         }
@@ -165,7 +168,10 @@ function handlePostback(sender_psid, received_postback) {
 
   switch (payload) {
     case 'welcome':
-      callSendAPI(sender_psid, { "text": "Hi" }).then(() => {
+      db.get('messages').push({
+        user: sender_psid, name: '', messages: []
+      }).save();
+      callSendAPI(sender_psid, { "text": "Hi" }).then(() => {        
         callSendAPI(sender_psid, { "text": "What is your first name ?" });
       });
       break;
