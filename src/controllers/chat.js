@@ -1,6 +1,7 @@
 require("dotenv").config();
 import request from "request";
 import stormDb from "../services/db";
+import dayjs from 'dayjs';
 
 let postWebhook = (req, res) =>{
   // Parse the request body from the POST
@@ -93,66 +94,7 @@ function handleMessage(sender_psid, received_message) {
         callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
       }
     } else {
-      const text = received_message.text;
-      if (Date.parse(text)) {
-        response = {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": [{
-                "title": `Is this your birth date? ${received_message.text}`,
-                "subtitle": "Tap a button to answer.",
-                "buttons": [
-                    {
-                        "type": "postback",
-                        "title": "Yes!",
-                        "payload": "yes_birthdate",
-                    },
-                    {
-                        "type": "postback",
-                        "title": "No!",
-                        "payload": "no_birthdate",
-                    }
-                ],
-              }]
-            }
-          }
-        }
-      } else {
-        const yesNoAnswers = ['yes', 'yeah', 'yup', 'no', 'nah'];
-        if (yesNoAnswers.includes(received_message.text.toLowerCase())) {
-
-        } else {
-          // update name
-          stormDb.updateNameById(sender_psid, received_message.text);
-          
-          response = {
-            "attachment": {
-              "type": "template",
-              "payload": {
-                "template_type": "generic",
-                "elements": [{
-                  "title": `Is this your first name? ${received_message.text}`,
-                  "subtitle": "Tap a button to answer.",
-                  "buttons": [
-                      {
-                          "type": "postback",
-                          "title": "Yes!",
-                          "payload": "yes_firstname",
-                      },
-                      {
-                          "type": "postback",
-                          "title": "No!",
-                          "payload": "no_firstname",
-                      }
-                  ],
-                }]
-              }
-            }
-          }
-        }
-      }
+      response = messagesByState(sender_psid, received_message);
 
       callSendAPI(sender_psid, response);
     }
@@ -160,6 +102,102 @@ function handleMessage(sender_psid, received_message) {
 
   // Sends the response message
   // callSendAPI(sender_psid, response);
+}
+
+function messagesByState(sender_psid, received_message){
+  let response;
+  const text = received_message.text;
+  const currState = stormDb.getStateById(sender_psid);
+  switch (currState) {
+    case 'welcome':
+      break;
+    case 'firstname':
+      // update name
+      stormDb.updateNameById(sender_psid, received_message.text);
+
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [{
+              "title": `Is this your first name? ${received_message.text}`,
+              "subtitle": "Tap a button to answer.",
+              "buttons": [
+                  {
+                      "type": "postback",
+                      "title": "Yes!",
+                      "payload": "yes_firstname",
+                  },
+                  {
+                      "type": "postback",
+                      "title": "No!",
+                      "payload": "no_firstname",
+                  }
+              ],
+            }]
+          }
+        }
+      }
+      break;
+    case 'birthdate':
+      // update date
+      stormDb.updateDateById(sender_psid, received_message.text);
+
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [{
+              "title": `Is this your birth date? ${received_message.text}`,
+              "subtitle": "Tap a button to answer.",
+              "buttons": [
+                  {
+                      "type": "postback",
+                      "title": "Yes!",
+                      "payload": "yes_birthdate",
+                  },
+                  {
+                      "type": "postback",
+                      "title": "No!",
+                      "payload": "no_birthdate",
+                  }
+              ],
+            }]
+          }
+        }
+      }
+      break;
+    case 'countdays':
+      const yesAnswers = ['yes', 'yeah', 'yup'];
+      const noAnswers = ['no', 'nah', 'nope'];
+      if (yesAnswers.includes(received_message.text.toLowerCase())) {
+        stormDb.updateStateById(sender_psid, 'resultdays'); 
+      } else if (noAnswers.includes(received_message.text.toLowerCase())) {
+        stormDb.updateStateById(sender_psid, 'bye'); 
+      }
+      break;
+    case 'resultdays':
+      const birthDate = stormDb.getDateById(sender_psid);
+      response = { "text": `There are ${countDays(birthDate)} days until your next birthday` };
+      break;
+    default:
+      break;
+  }
+}
+
+function countDays(date){
+  const today = dayjs();
+  const birthDate = dayjs(date);
+  const monthBirth = birthDate.month();
+  const dayBirth = birthDate.date();
+  let nextBirthDate = today.month(monthBirth).date(dayBirth);
+  if (nextBirthDate.isBefore(today)) {
+    nextBirthDate = nextBirthDate.add(1, 'year');
+  }
+  
+  return nextBirthDate.diff(today, 'day');
 }
 
 // Handles messaging_postbacks events
@@ -171,20 +209,27 @@ function handlePostback(sender_psid, received_postback) {
 
   switch (payload) {
     case 'welcome':
-      stormDb.db.get('messages').push({
+      stormDb.push({
         user: sender_psid, name: '', messages: []
-      }).save();
-      callSendAPI(sender_psid, { "text": "Hi" }).then(() => {        
+      });
+      stormDb.pushState({
+        user: sender_psid, state: 'welcome'
+      });
+      
+      callSendAPI(sender_psid, { "text": "Hi" }).then(() => {       
+        stormDb.updateStateById(sender_psid, 'firstname'); 
         callSendAPI(sender_psid, { "text": "What is your first name ?" });
       });
       break;
     case 'yes_firstname':
+      stormDb.updateStateById(sender_psid, 'birthdate'); 
       callSendAPI(sender_psid, { "text": "when is your birth date ?" });
       break;
     case 'no_firstname':
       callSendAPI(sender_psid, { "text": "What is your first name ?" });
       break;
     case 'yes_birthdate':
+      stormDb.updateStateById(sender_psid, 'countdays'); 
       callSendAPI(sender_psid, { 
         "attachment": {
           "type": "template",
@@ -214,9 +259,11 @@ function handlePostback(sender_psid, received_postback) {
       callSendAPI(sender_psid, { "text": "What is your birth date ?" });
       break;
     case 'yes_count':
+      stormDb.updateStateById(sender_psid, 'resultdays'); 
       callSendAPI(sender_psid, { "text": "There are N days until your next birthday" });
       break;
     case 'no_count':
+      stormDb.updateStateById(sender_psid, 'bye'); 
       callSendAPI(sender_psid, { "text": "Goodbye" });
       break;
     default:

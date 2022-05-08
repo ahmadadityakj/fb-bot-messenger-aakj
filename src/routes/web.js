@@ -2,6 +2,7 @@ import express from "express";
 import homeController from "../controllers/home";
 import chatController from "../controllers/chat";
 import stormDb from "../services/db";
+import dayjs from 'dayjs';
 
 let router = express.Router();
 
@@ -33,6 +34,17 @@ let webRoutes = (app)=> {
   router.get("/messages", (req, res) => {
     const allMessages = stormDb.db.get('messages').value();
     res.status(200).json(allMessages);
+  });
+  router.get("/datediff", (req, res) => {
+    const today = dayjs();
+    const birthDate = dayjs('1989-04-22');
+    const monthBirth = birthDate.month();
+    const dayBirth = birthDate.date();
+    let nextBirthDate = today.month(monthBirth).date(dayBirth);
+    if (nextBirthDate.isBefore(today)) {
+      nextBirthDate = nextBirthDate.add(1, 'year');
+    }
+    res.status(200).json(nextBirthDate.diff(today, 'day'));
   });
 
   return app.use("/", router);
