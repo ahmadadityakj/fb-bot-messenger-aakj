@@ -92,27 +92,55 @@ function handleMessage(sender_psid, received_message) {
         callSendAPI(sender_psid, { "text": `this is your birth date: "${received_message.text}"` })
       }
     } else {
-      response = {
-        "attachment": {
-          "type": "template",
-          "payload": {
-            "template_type": "generic",
-            "elements": [{
-              "title": "Is this your first name?",
-              "subtitle": "Tap a button to answer.",
-              "buttons": [
-                  {
-                      "type": "postback",
-                      "title": "Yes!",
-                      "payload": "yes_firstname",
-                  },
-                  {
-                      "type": "postback",
-                      "title": "No!",
-                      "payload": "no_firstname",
-                  }
-              ],
-            }]
+      const text = received_message.text;
+      if (Date.parse(text)) {
+        response = {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [{
+                "title": `Is this your birth date? ${received_message.text}`,
+                "subtitle": "Tap a button to answer.",
+                "buttons": [
+                    {
+                        "type": "postback",
+                        "title": "Yes!",
+                        "payload": "yes_birthdate",
+                    },
+                    {
+                        "type": "postback",
+                        "title": "No!",
+                        "payload": "no_birthdate",
+                    }
+                ],
+              }]
+            }
+          }
+        }
+      } else {
+        response = {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [{
+                "title": `Is this your first name? ${received_message.text}`,
+                "subtitle": "Tap a button to answer.",
+                "buttons": [
+                    {
+                        "type": "postback",
+                        "title": "Yes!",
+                        "payload": "yes_firstname",
+                    },
+                    {
+                        "type": "postback",
+                        "title": "No!",
+                        "payload": "no_firstname",
+                    }
+                ],
+              }]
+            }
           }
         }
       }
@@ -135,14 +163,43 @@ function handlePostback(sender_psid, received_postback) {
   switch (payload) {
     case 'welcome':
       callSendAPI(sender_psid, { "text": "Hi" }).then(() => {
-        callSendAPI(sender_psid, { "text": "What is your first name ?" })
+        callSendAPI(sender_psid, { "text": "What is your first name ?" });
       });
       break;
     case 'yes_firstname':
-      callSendAPI(sender_psid, { "text": "when is your birth date ?" })
+      callSendAPI(sender_psid, { "text": "when is your birth date ?" });
       break;
     case 'no_firstname':
-      callSendAPI(sender_psid, { "text": "What is your first name ?" })
+      callSendAPI(sender_psid, { "text": "What is your first name ?" });
+      break;
+    case 'yes_birthdate':
+      callSendAPI(sender_psid, { 
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [{
+              "title": `Do you want to know how many days till your next birthday ?`,
+              "subtitle": "Tap a button to answer.",
+              "buttons": [
+                  {
+                      "type": "postback",
+                      "title": "Yes!",
+                      "payload": "yes_count",
+                  },
+                  {
+                      "type": "postback",
+                      "title": "No!",
+                      "payload": "no_count",
+                  }
+              ],
+            }]
+          }
+        }
+      });
+      break;
+    case 'no_birthdate':
+      callSendAPI(sender_psid, { "text": "What is your birth date ?" });
       break;
     default:
       break;
