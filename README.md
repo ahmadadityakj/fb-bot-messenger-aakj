@@ -10,7 +10,7 @@
 - Run "npm install" to setup the project
 - Run "npm start" to test project at the localhost
 
-## Aditional information
+## Additional information
 I put this project at heroku to test facebook chat messenger functionality. We need to setup heroku, facebook page and facebook app messenger.
 ### 1. Create a Heroku app
 - Deploy app to Heroku ( need to setup dev dependencies:
