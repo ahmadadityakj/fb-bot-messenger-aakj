@@ -80,6 +80,7 @@ function handleMessage(sender_psid, received_message) {
     let entitiesArr = ["wit$datetime:$datetime"];
     let entityChosen = "";
     console.log('=== nlp start');
+    console.log(received_message);
     console.log(received_message.nlp);
     console.log('=== nlp end');
     entitiesArr.forEach((name) => {
