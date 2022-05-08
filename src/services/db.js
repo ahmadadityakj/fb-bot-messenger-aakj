@@ -20,10 +20,22 @@ const updateDateById = (id, newDate) => {
   db.get('messages').set(newMessages).save();
 };
 
+const updateMessageById = (id, newMessage) => {
+  const prevMessages = db.get('messages').value();
+  const newMessages = prevMessages.map(x => x.user === id ? { ...x, messages: [...messages, newMessage] } : x);
+  db.get('messages').set(newMessages).save();
+};
+
 const getDateById = (id) => {
   const messages = db.get('messages').value();
   const message = messages.find(x => x.user === id);
   return message.birthDate;
+};
+
+const getMessageById = (id) => {
+  const messages = db.get('messages').value();
+  const message = messages.find(x => x.user === id);
+  return message;
 };
 
 const updateStateById = (id, newState) => {
@@ -38,12 +50,19 @@ const getStateById = (id) => {
   return message?.state;
 };
 
+const emptyDatabase = () => {
+  db.get('messages').set([]);
+}
+
 module.exports = {
   db: db,
   push: push,
   updateNameById: updateNameById,
   updateDateById: updateDateById,
+  updateMessageById: updateMessageById,
   getDateById: getDateById,
+  getMessageById: getMessageById, 
   updateStateById: updateStateById,
-  getStateById: getStateById
+  getStateById: getStateById,
+  emptyDatabase: emptyDatabase
 };

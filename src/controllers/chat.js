@@ -1,6 +1,7 @@
 require("dotenv").config();
 import request from "request";
 import stormDb from "../services/db";
+import dateHelper  from "../helpers/date";
 import dayjs from 'dayjs';
 
 let postWebhook = (req, res) =>{
@@ -68,19 +69,6 @@ let getWebhook = (req, res) => {
     }
   }
 };
-
-function countDays(date){
-  const today = dayjs();
-  const birthDate = dayjs(date);
-  const monthBirth = birthDate.month();
-  const dayBirth = birthDate.date();
-  let nextBirthDate = today.month(monthBirth).date(dayBirth);
-  if (nextBirthDate.isBefore(today)) {
-    nextBirthDate = nextBirthDate.add(1, 'year');
-  }
-  
-  return nextBirthDate.diff(today, 'day');
-}
 
 function messagesByState(sender_psid, received_message){
   let response;
@@ -157,7 +145,7 @@ function messagesByState(sender_psid, received_message){
       break;
     case 'resultdays':
       const birthDate = stormDb.getDateById(sender_psid);
-      response = { "text": `There are ${countDays(birthDate)} days until your next birthday` };
+      response = { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` };
       break;
     default:
       break;
@@ -176,6 +164,9 @@ function handleMessage(sender_psid, received_message) {
 
   // Check if the message contains text
   if (received_message.text) {
+    // update message from user
+    stormDb.updateMessageById(sender_psid, received_message.text);
+
     if (received_message.nlp) {
       // if nlp exist
       let entitiesArr = ["wit$datetime:$datetime"];
@@ -260,7 +251,7 @@ function handlePostback(sender_psid, received_postback) {
     case 'yes_count':
       stormDb.updateStateById(sender_psid, 'resultdays');
       const birthDate = stormDb.getDateById(sender_psid);
-      callSendAPI(sender_psid, { "text": `There are ${countDays(birthDate)} days until your next birthday` });
+      callSendAPI(sender_psid, { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` });
       break;
     case 'no_count':
       stormDb.updateStateById(sender_psid, 'bye'); 
