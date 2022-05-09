@@ -138,7 +138,7 @@ function messagesByState(sender_psid, received_message){
       if (yesAnswers.includes(received_message.text.toLowerCase())) {
         stormDb.updateStateById(sender_psid, 'resultdays');
         const birthDate = stormDb.getDateById(sender_psid);
-        response = { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` }; 
+        response = { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days left until your next birthday` }; 
       } else if (noAnswers.includes(received_message.text.toLowerCase())) {
         stormDb.updateStateById(sender_psid, 'bye');
         response = { "text": "Goodbye" };
@@ -146,7 +146,7 @@ function messagesByState(sender_psid, received_message){
       break;
     case 'resultdays':
       const birthDate = stormDb.getDateById(sender_psid);
-      response = { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` };
+      response = { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days left until your next birthday` };
       break;
     case 'bye':
       response = { "text": "Goodbye" };
@@ -262,7 +262,7 @@ function handlePostback(sender_psid, received_postback) {
       stormDb.updateMessageById(sender_psid, received_postback.title);
       stormDb.updateStateById(sender_psid, 'resultdays');
       const birthDate = stormDb.getDateById(sender_psid);
-      callSendAPI(sender_psid, { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days until your next birthday` });
+      callSendAPI(sender_psid, { "text": `There are ${dateHelper.countNextBirthDay(birthDate)} days left until your next birthday` });
       break;
     case 'no_count':
       stormDb.updateMessageById(sender_psid, received_postback.title);
