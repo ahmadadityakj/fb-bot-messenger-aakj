@@ -24,3 +24,7 @@ heroku config:set NPM_CONFIG_PRODUCTION=false
 - Create a Facebook App
 - Config webhook
 - Add Facebook chat plugin into your website
+
+## GIF recordings of actual working product
+![](https://github.com/ahmadadityakj/fb-bot-messenger-aakj/blob/main/bot.gif)
+![](https://github.com/ahmadadityakj/fb-bot-messenger-aakj/blob/main/endpoints.gif)
