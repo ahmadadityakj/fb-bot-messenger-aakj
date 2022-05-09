@@ -12,6 +12,10 @@ beforeAll(() => {
   stormDb.db.get('messages').set(dummyData);
 });
 
+afterAll(() => {
+  stormDb.db.get('messages').set([]);
+});
+
 describe('Database Test', () => {
   test('Initiate Data Test', () => {
     const data = stormDb.db.get('messages').value();
